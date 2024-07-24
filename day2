@@ -1,0 +1,145 @@
+1.mysql> ALTER TABLE student  ADD column gender Varchar (10) check (gender in ('Female','Male'));
+----------------------------------------------------------------
+
+2.mysql> ALTER TABLE student add birth_date date ;
+
+------------------------------------------------------------------------
+
+3.mysql> ALTER TABLE student add (first_name varchar(10) ,last_name varchar(10)) ;
+
+-------------------------------------------------------------------------------------------
+
+4.
+ mysql> ALTER TABLE achieve_score ADD CONSTRAINT fk_ex_id_sc FOREIGN KEY (ex_id) REFERENCES exame(ex_id) ON DELETE CASCADE;
+
+ ALTER TABLE achieve_score ADD CONSTRAINT fk_stud_id_sc FOREIGN KEY (id_stud) REFERENCES student(id_student) ON DELETE CASCADE;
+ 
+ ALTER TABLE achieve_score ADD CONSTRAINT fk_sub_id_sc FOREIGN KEY (id_sub) REFERENCES subject(id_sub) ON DELETE CASCADE;
+ 
+ ALTER TABLE sut_has_sub ADD CONSTRAINT fk_sub_id FOREIGN KEY (id_sup) REFERENCES subject(id_sub) on DELETE CASCADE;
+ 
+ ALTER TABLE sut_has_sub ADD CONSTRAINT fk_sub_id_has FOREIGN KEY (id_sup) REFERENCES subject(id_sub) on delete cascade;
+ 
+ ALTER TABLE sut_has_sub ADD CONSTRAINT fk_student_id_has FOREIGN KEY (id_student) REFERENCES student(id_student) on delete cascade;
+
+ALTER TABLE phone ADD CONSTRAINT fk_student_id FOREIGN KEY (id_student) REFERENCES student(id_student) on delete cascade;
+mysql> select count(id_student) from student ;
+
+-----------------------------------------------------------------------------------------
+5.
+ UPDATE student set first_name='anas' , last_name = 'abdelaziz' , birth_date='1999-06-01' where id_student=1;
+ 
+ mysql> UPDATE student set first_name='ahmed' , last_name = 'ali' , birth_date='1995-07-02' where id_student =2;
+ 
+ mysql> UPDATE student set first_name='omar' , last_name = 'ahmed' , birth_date='1989-08-12' where id_student =3;
+
+
+------------------------------------------------------------------------------
+6-
+
+----------------------------------------------------------------------
+7-
+mysql> select * from student ;
+
+------------------------------------------------
+8-mysql> select * from student where gender='Fmale' ;
+
+---------------------------------------------------
+
+9.
+mysql> select count(id_student) from student where gender='Female' ;
+
+
+---------------------------------------------------------------
+
+10. 
+mysql> select *  from student where gender='Male' and birth_date < '1991-10-01' ;
+
+
+----------------------------------------------
+11.
+mysql> select * from subject order by max_score
+
+----------------------------------------
+12.
+mysql> select * from subject order by max_score DESC limit 1;
+-------------------------------------------------------
+13.
+
+mysql> select  * from  student where first_name like 'a%';
+
+-----------------------------------------------------------------
+14.
+mysql> select  count(id_student) from  student where first_name = 'Mohammed';
+
+
+--------------------------------------------------------
+
+15.
+mysql> select  count(id_student) from  student  where gender='Female' union select count(id_student) as male from student where gender='Male'
+
+******
+-----------------------------------------------------------------------------
+16.
+mysql> select first_name ,count(first_name) from student group by first_name having count(first_name)>2;
+
+
+
+-----------------------------------------------------------------------
+
+17.
+create table tracks ( name varchar(20), id_tra int);
+insert into tracks values ('dotnet', 1), ('PHP',2), ('frontEnd', 3),('socialMedia',4);
+mysql> alter table student add column id_tra int;
+mysql> alter table tracks add primary key (id_tra);
+alter table student add constraint FK_id_tra foreign key (id_tra) references tracks(id_tra);
+
+update student set id_tra =2 where id_student = 1 ;
+update student set id_tra =3 where id_student = 2 ;
+update student set id_tra =4 where id_student =3 ;
+update student set id_tra =1 where id_student =4 ;
+
+create view display_track_student as select first_name, tracks.name from student,tracks w
+here student.id_tra = tracks.id_tra;
+
+
+---------------------------------
+18.
+
+mysql> alter table subject add column id_tra int ;
+ALTER TABLE subject ADD CONSTRAINT fk_tra_sub FOREIGN KEY (id_tra) REFERENCES tracks(id_tra) ON DELETE RESTRICT
+
+mysql> update subject set id_tra =2 where id_sub = 1 ;
+mysql> update subject set id_tra =1 where id_sub = 2 ;
+mysql> update subject set id_tra =4 where id_sub = 3 ;
+
+
+create view display_track_subject as select subject.name as name_sub, tracks.name as name_tra from subject,tracks where subject.id_tra = tracks.id_tra;
+
+
+
+--------------------------------------
+19.
+mysql> create view display_student_subject_names as select student.first_name  , subject.name from student ,subject,sut_has_sub where student.id_student = sut_has_sub.id_student and subject.id_sub=sut_has_sub.id_sup;
+
+
+------------------------------------------------------------
+
+20.
+
+create view display_student_subject_score select  student.first_name, subject.name, exame.score from student inner join exame inner join subject inner join achieve_score on student.id_student = achieve_score.id_stud and exame.ex_id = achieve_score.ex_id and subject.id_sub=achieve_score.id_sub;
+
+
+-------------------------------------------------------------------------
+
+21. 
+create temporary view display_subject_maxscore as select name, max_score from subject;
+
+
+----------------------------------------
+
+22.
+
+delete from student where id_student in  (select id_stud from exame where score < 50);
+
+
