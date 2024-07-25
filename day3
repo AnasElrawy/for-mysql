@@ -1,0 +1,161 @@
+BEGIN;
+INSERT INTO student (id_student, first_name)
+VALUES (5, 'john");
+
+INSERT INTO scores (id_student, first_name)
+VALUES (6, "Math');
+
+
+COMMIT;
+
+----------------------------------------------------------
+
+2.
+mysql> SELECT MONTHNAME(exam_date) from exame;
+
+
+---------------------------------------
+ 
+3.
+mysql> SELECT TIMESTAMPDIFF(YEAR, birth_date, curdate()) as age from student ;
+
+
+-------------------------------------------
+
+4.
+mysql> select first_name, round(score) as "rounded score" from student join exame join achieve_score on student.id_student=achieve_score.id_stud and exame.ex_id = achieve_score.ex_id;
+
+
+------------------------------------
+
+5. 
+select first_name, year(birth_date) as "year of birthdata" from student;
+
+-----------------------------------------------------
+
+6.
+mysql> insert exame values(now(),100,4);
+
+-----------------------------------------------
+
+7.
+delimiter //
+      create function hello(name varchar(25)) returns varchar(25)
+      deterministic
+      begin
+        return concat("welcome ",name);
+      end //
+      delimiter ;
+      
+-----------------------------------------------------------------------
+
+8.delimiter //
+      create function multiply(n1 int, n2 int)
+      returns int
+      deterministic
+      begin
+        return n1*n2;
+      end//
+      delimiter ;
+
+--------------------------------------------------------------------
+
+9.
+
+delimiter //
+
+      create procedure score(studentId int, exameId int)
+      begin
+      select score from exame where ex_id =exameId  and stud_id=studentId;
+      end//
+      
+delimiter ;
+
+call score(1,1)
+
+------------------------------------------------------------
+
+10.
+delimiter //
+      create procedure numberOfFailed()
+      begin
+      select count(ex_id) from exame where score<50;
+      end//
+delimiter ;
+
+
+---------------------------------------------------------------
+
+11.
+
+delimiter //
+create function avg_max_score(subjName varchar(25))
+returns float
+DETERMINISTIC
+begin
+	declare average float;
+	select avg(max_score) from subject where name = subjName ;
+	return average;
+end //
+delimiter ;
+
+---------------------------------------------------------------------
+
+12.
+create table Deleted_Students like student;
+
+----------------------------------------------
+13.
+
+delimiter //
+      create trigger student_deleted
+      after delete on student
+      for each row
+      begin
+        insert into Deleted_Students
+        values (old.email,old.address,old.id_student,old.first_name,
+                old.last_name,old.birth_date,old.gender);
+      end //
+      delimiter ;
+      
+-----------------------------------------------------------------------
+14.
+create table Backup_Student like student;
+
+delimiter //
+    create trigger student_added
+      after insert on student
+      for each row
+        begin
+          insert into Backup_Students
+          values (new.email,new.address,new.id_student,new.first_name,
+                new.last_name,new.birth_date,new.gender);
+        end //
+delimiter ;
+
+------------------------------------------------------------
+
+16.
+$ mysqldump --databases Student_DB >Student_db.sql
+
+-------------------------------
+ 
+ 17.
+ sudo mysqldump --tables Student_DB student > studenTable.sql^C
+
+------------------------------------------
+
+18.     
+in mysql
+source Student_db.sql
+or 
+in terminal
+mysql < Student_db.sql      
+      
+      
+      
+      
+      
+      
+      
+      
